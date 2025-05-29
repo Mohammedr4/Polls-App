@@ -1,0 +1,60 @@
+<h1>{{ question.question_text }}</h1>
+
+{% if error_message %}
+    <p><strong style="color: red;">{{ error_message }}</strong></p>
+{% endif %}
+
+{% if user.is_authenticated %}
+    {% if not has_voted %}
+        <form action="{% url 'polls:vote' question.id %}" method="post">
+            {% csrf_token %}
+            {% for choice in question.choice_set.all %}
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            {% endfor %}
+            <button type="submit">Vote</button>
+        </form>
+    {% else %}
+        <p>You have already voted for this question.</p>
+    {% endif %}
+
+    <!-- Comments Section -->
+    <h2>Comments</h2>
+    <div id="comments">
+        {% for comment in comments %}
+            <p><strong>{{ comment.user.username }}:</strong> {{ comment.comment_text }}</p>
+        {% empty %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endfor %}
+    </div>
+
+    <form action="{% url 'polls:add_comment' question.id %}" method="post">
+        {% csrf_token %}
+        <textarea name="comment_text" rows="3" placeholder="Add a comment..."></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+{% else %}
+    <p>You must be logged in to vote. <a href="{% url 'login' %}">Login here</a></p>
+{% endif %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+    h1, h2 {
+        color: #333;
+    }
+    form {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    label, textarea {
+        display: block;
+        margin-bottom: 10px;
+    }
+</style>
