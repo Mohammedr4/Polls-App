@@ -7,7 +7,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-m3rbzs9w6%pv$=b9yr_^p&7yj9=w42n6m_dp^^cfskf+o013r1'
 
 
-DEBUG = True
+DEBUG = False
+# Set DEBUG to False for production
 
 ALLOWED_HOSTS = ['polls-app-production.up.railway.app', '127.0.0.1', 'localhost']
 
@@ -62,8 +63,6 @@ DATABASES = {
 }
 
 
-# Password validation
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -100,3 +99,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/polls/'
 LOGOUT_REDIRECT_URL = '/polls/'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://polls-app-production.up.railway.app",
+]
+# Ensure that the CSRF_TRUSTED_ORIGINS includes your production URL
