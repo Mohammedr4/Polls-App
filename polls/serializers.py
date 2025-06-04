@@ -7,7 +7,7 @@ class ChoiceSerializer(serializers.ModelSerializer):
         fields = ['id', 'choice_text', 'votes']
 
 class QuestionSerializer(serializers.ModelSerializer):
-    choices = ChoiceSerializer(many=True, read_only=True)  # nested serializer
+    choices = ChoiceSerializer(many=True, read_only=True)  
 
     class Meta:
         model = Question

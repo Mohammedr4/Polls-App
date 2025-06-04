@@ -23,7 +23,7 @@ class UserVote(models.Model):
     class Meta:
         unique_together = ('user', 'question')
 
-#add a model for poll comments and discussion
+
 class PollComment(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
