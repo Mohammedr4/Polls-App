@@ -5,9 +5,9 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Question, Choice, UserVote, PollComment
-from .forms import QuestionForm  # Make sure you have this form defined
+from .forms import QuestionForm  
 
-# Index view that lists the latest 5 questions
+
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
@@ -15,7 +15,7 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return Question.objects.order_by('-pub_date')[:5]
 
-# Detail view to show a specific question and its choices
+
 class DetailView(generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
@@ -24,21 +24,23 @@ class DetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         question = self.get_object()
 
-        # Get comments for this question, ordered by newest first
         comments = PollComment.objects.filter(question=question).order_by('-created_at')
         context['comments'] = comments
 
-        # Check if the user has voted on this question
-        has_voted = UserVote.objects.filter(user=self.request.user, question=question).exists()
+        if self.request.user.is_authenticated:
+            has_voted = UserVote.objects.filter(user=self.request.user, question=question).exists()
+        else:
+            has_voted = False
         context['has_voted'] = has_voted
+
         return context
 
-# Results view showing poll results
+
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
-# Vote view: record vote if not voted before, else show error
+
 @login_required(login_url='login')
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
@@ -65,7 +67,7 @@ def vote(request, question_id):
     messages.success(request, "Your vote has been recorded!")
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
-# Create a new question
+
 @login_required(login_url='login')
 def create_question(request):
     if request.method == 'POST':
@@ -78,7 +80,7 @@ def create_question(request):
         form = QuestionForm()
     return render(request, 'polls/create_question.html', {'form': form})
 
-# Add a comment to a poll question
+
 @login_required(login_url='login')
 def comment_on_poll(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
