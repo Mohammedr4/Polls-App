@@ -11,4 +11,6 @@ urlpatterns = [
     path('<int:question_id>/vote/', views.vote, name='vote'),
     path('create/', views.create_question, name='create_question'),
     path('<int:question_id>/comment/', views.comment_on_poll, name='add_comment'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 ]

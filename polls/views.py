@@ -1,12 +1,12 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from .models import Question, Choice, UserVote, PollComment
 from .forms import QuestionForm  
-
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
@@ -14,7 +14,6 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         return Question.objects.order_by('-pub_date')[:5]
-
 
 class DetailView(generic.DetailView):
     model = Question
@@ -35,11 +34,9 @@ class DetailView(generic.DetailView):
 
         return context
 
-
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
-
 
 @login_required(login_url='login')
 def vote(request, question_id):
@@ -67,7 +64,6 @@ def vote(request, question_id):
     messages.success(request, "Your vote has been recorded!")
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
-
 @login_required(login_url='login')
 def create_question(request):
     if request.method == 'POST':
@@ -80,7 +76,6 @@ def create_question(request):
         form = QuestionForm()
     return render(request, 'polls/create_question.html', {'form': form})
 
-
 @login_required(login_url='login')
 def comment_on_poll(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
@@ -92,3 +87,24 @@ def comment_on_poll(request, question_id):
         else:
             messages.error(request, "Comment cannot be empty.")
     return HttpResponseRedirect(reverse('polls:detail', args=(question.id,)))
+
+# --- New login/logout views ---
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('polls:index')
+        else:
+            messages.error(request, "Invalid username or password")
+            return render(request, 'login.html')
+
+    return render(request, 'login.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('polls:index')
