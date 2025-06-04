@@ -11,9 +11,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-m3rbzs9w6%pv$=b9yr_^p&7yj9=w42n6m_dp^^cfskf+o013r1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['134.122.109.128', 'localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['polls-app-production.up.railway.app', '127.0.0.1', 'localhost']
 
 
 # Application definition
